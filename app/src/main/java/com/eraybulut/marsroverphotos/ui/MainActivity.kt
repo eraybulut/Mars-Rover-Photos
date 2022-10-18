@@ -2,10 +2,8 @@ package com.eraybulut.marsroverphotos.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import androidx.recyclerview.widget.LinearLayoutManager
+import android.widget.Toast
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.eraybulut.marsroverphotos.R
 import com.eraybulut.marsroverphotos.adapter.PhotosAdapter
 import com.eraybulut.marsroverphotos.data.remote.ApiClient
 import com.eraybulut.marsroverphotos.databinding.ActivityMainBinding
@@ -20,7 +18,6 @@ class MainActivity : AppCompatActivity() {
     private val apiClient by lazy { ApiClient.getApiClient() }
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding=ActivityMainBinding.inflate(layoutInflater)
@@ -28,9 +25,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(view)
 
 
-       getMarsInfo()
-       binding.rv.setHasFixedSize(true)
-       binding.rv.layoutManager=StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL)
+       getRoverPhotos()
+
+       setupRecyclerView()
 
 
 
@@ -38,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun getMarsInfo(){
+    private fun getRoverPhotos (){
         apiClient.getPhoto().enqueue(object :Callback<PhotoResponse>{
             override fun onResponse(call: Call<PhotoResponse>, response: Response<PhotoResponse>) {
                 if (response.isSuccessful){
@@ -47,9 +44,14 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<PhotoResponse>, t: Throwable) {
-                TODO("Not yet implemented")
+                Toast.makeText(this@MainActivity,t.localizedMessage,Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun setupRecyclerView(){
+        binding.rv.setHasFixedSize(true)
+        binding.rv.layoutManager=StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL)
     }
 
 }
